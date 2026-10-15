@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#03070f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="VISOL">
+<title>VISOL</title>
+<style>
+:root{--bg:#03070f;--card:#060d18;--line:#12203a;--line2:#1b2f52;--text:#e8eef9;--muted:#7f8da6;--blue:#0b93ff;--gold:#ffc247;--red:#ff5a6e;--green:#2fd08a;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.45}
+body{min-height:100vh;padding-bottom:76px}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+header{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:12px 14px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em;background:none;border:0}
+.logo i{width:26px;height:26px;border-radius:7px;background:#07244a;border:1px solid var(--line2);display:grid;place-items:center}
+.logo i::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--blue)}
+.hbtns{display:flex;align-items:center;gap:12px}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:#07244a;display:grid;place-items:center;color:var(--blue);font-size:15px}
+.burger{background:none;border:0;color:var(--muted);font-size:18px;padding:4px 6px}
+#menu{display:none;position:fixed;inset:0;top:57px;z-index:25;background:var(--bg);padding:12px 14px;overflow:auto}
+#menu.open{display:block}
+#menu .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#menu button{background:var(--card);border:1px solid var(--line);border-radius:7px;text-align:left;padding:9px 10px;font-size:13px}
+#menu button.adm{border-color:#4a3a14;color:var(--gold)}
+main{max-width:760px;margin:0 auto;padding:18px 14px}
+.page{display:none}.page.active{display:block}
+body:not(.js) #p-accueil{display:block}
+#err{display:none;position:fixed;left:8px;right:8px;top:8px;z-index:300;background:#3a0a0a;border:1px solid #a33;color:#fff;padding:10px;border-radius:8px;font-size:12px}
+.eyebrow{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+h1{font-size:25px;line-height:1.2;font-weight:700;margin-bottom:12px}
+h2{font-size:14px;font-weight:700}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 10px}
+.sec-head small{color:var(--muted);font-size:11px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{border:1px solid var(--line);background:#06142a;border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted)}
+.chip.gold{color:var(--gold);border-color:#4a3a14}.chip.green{color:var(--green);border-color:#0e4a35}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stats .card small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}
+.stats .card b{font-size:17px}
+.btn{display:block;width:100%;background:var(--blue);border:0;border-radius:7px;padding:11px;font-weight:600;color:#fff;text-align:center;text-decoration:none}
+.btn.ghost{background:var(--card);border:1px solid var(--line2);color:var(--text)}
+.btn.gold{background:var(--gold);color:#201400}
+.btn.red{background:#3a1018;border:1px solid #6a2030;color:#ffb3bd}
+.btn.sm{width:auto;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;font-size:12px}
+.btn[disabled]{opacity:.5}
+.list .row{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);background:var(--card);margin-bottom:-1px;font-size:13px}
+.list .row span:last-child{color:var(--muted);text-align:right}
+.muted{color:var(--muted)}
+.quote{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:8px}
+.quote p{font-size:13px}.quote small{color:var(--muted);font-size:11px}
+.banner{background:linear-gradient(90deg,#0b2a52,#1b1740);border:1px solid var(--line2);border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:14px}
+/* hero */
+.hero h1{font-size:30px}
+.hero p.lead{font-size:15px;color:#b9c6dc;margin-bottom:16px}
+.hero .cta{display:grid;gap:8px;margin:16px 0}
+.ba{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line2);aspect-ratio:4/3;background:#000;touch-action:pan-y}
+.ba canvas{position:absolute;inset:0;width:100%;height:100%}
+.ba .after{clip-path:inset(0 0 0 50%)}
+.ba .handle{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;pointer-events:none}
+.ba .handle::after{content:"⇄";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-size:15px}
+.ba input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;-webkit-appearance:none;background:none}
+.ba .lab{position:absolute;top:10px;font-size:10px;font-weight:700;background:rgba(0,0,0,.55);padding:3px 8px;border-radius:10px;pointer-events:none}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feat .card b{display:block;font-size:13px;margin-bottom:3px}.feat .card span{font-size:11px;color:var(--muted)}
+.meter{display:flex;gap:6px;margin:8px 0 4px}.meter i{flex:1;height:6px;border-radius:3px;background:#1a2438}.meter i.on{background:var(--blue)}.meter i.done{background:var(--green)}
+/* studio */
+.studio{border:1px solid var(--line);border-radius:6px;background:var(--card);overflow:hidden}
+.toolbar{display:flex;align-items:center;gap:4px;padding:8px 8px;border-bottom:1px solid var(--line);font-size:12px;flex-wrap:wrap}
+.toolbar button{background:none;border:0;color:var(--text);padding:4px 6px;font-size:12px}
+.toolbar .fname{margin-left:auto;color:var(--blue);font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.workspace{display:flex;border-bottom:1px solid var(--line)}
+.tools{display:flex;flex-direction:column;gap:6px;padding:8px 6px;border-right:1px solid var(--line)}
+.tools button{width:30px;height:30px;border-radius:6px;border:1px solid transparent;background:none;color:var(--muted);font-size:14px}
+.tools button.on{background:#07244a;border-color:var(--line2);color:var(--blue)}
+.canvas{position:relative;flex:1;height:320px;overflow:hidden;touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center;
+  background:#000 repeating-conic-gradient(#14181f 0 25%,#0b0e13 0 50%) 0 0/16px 16px}
+.canvas[data-bg=white]{background:#fff}.canvas[data-bg=black]{background:#000}.canvas[data-bg=blue]{background:#0b93ff}
+.canvas canvas{max-width:94%;max-height:94%;transform-origin:center;user-select:none}
+.canvas .tag{position:absolute;left:10px;top:8px;font-size:9px;font-weight:700;letter-spacing:.06em;z-index:2;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:8px}
+.canvas .hint{position:absolute;left:10px;bottom:6px;font-size:8.5px;color:var(--muted);z-index:2;max-width:92%;text-shadow:0 0 4px #000}
+.sfoot{display:flex;justify-content:space-between;align-items:center;padding:10px 12px}
+.sfoot .reset{background:none;border:0;font-size:12px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:6px 12px;font-size:12px;color:var(--muted)}
+.tabs button.on{background:#06142a;border-color:var(--line2);color:var(--blue)}
+.panel{padding:12px 14px}
+.panel .lbl{font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin:12px 0 8px}
+.presets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.presets button,.pbtn{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)}
+.presets button.on,.pbtn.on{background:#06142a;border-color:var(--line2);color:var(--blue)}
+.row2{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.slider{margin:10px 0 14px}
+.slider .t{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;color:var(--muted)}
+.slider .t b{color:var(--text);font-size:11px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;background:#2a3140;outline-offset:6px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--blue);border:0}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--blue);border:0}
+.trial{font-size:11px;color:var(--muted);text-align:center;padding:8px 12px;border-top:1px solid var(--line)}
+.trial b{color:var(--gold)}
+.lock{border:1px dashed #4a3a14;background:#120f05;border-radius:8px;padding:10px 12px;font-size:12px;color:#e8d29a;margin-bottom:10px}
+.field{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:7px;padding:10px;margin-bottom:8px;font-size:13px}
+.field:focus{border-color:#fff;outline:none}
+textarea.field{min-height:70px;resize:vertical}
+label.fl{display:block;font-size:11px;color:var(--muted);margin:8px 0 4px}
+.progress{height:4px;background:#1a2438;border-radius:2px;margin:12px 0}.progress i{display:block;height:100%;background:var(--blue);border-radius:2px}
+.lesson-title{font-size:17px;font-weight:700;margin:4px 0}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plan{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.plan.gold{border-color:#4a3a14;background:linear-gradient(160deg,#0c1626,#101a2c)}
+.plan h3{font-size:14px}.plan.gold h3{color:var(--gold)}.plan .price{font-size:11px;color:var(--muted)}
+.plan ul{list-style:none;font-size:11px;display:flex;flex-direction:column;gap:5px;margin:6px 0 10px;flex:1}
+@media(max-width:400px){.plans{grid-template-columns:1fr}}
+.profile{max-width:430px;margin:8px auto 0;text-align:center;padding:16px}
+.avatar{width:74px;height:74px;border-radius:50%;margin:0 auto 10px;border:2px solid #8a6b24;background:radial-gradient(circle at 35% 30%,#0e5a8a,#04101e);display:grid;place-items:center;font-size:28px;font-weight:700;color:#bfe3ff}
+.profile h1{font-size:19px;margin-bottom:2px}.handle{color:var(--muted);font-size:12px}
+.badge{display:inline-block;margin:10px 0;font-size:9px;letter-spacing:.14em;color:var(--gold);font-weight:700}
+.profile p.bio{font-size:12px;line-height:1.55;margin-bottom:12px}
+.socials{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:12px}
+.socials a{border:1px solid var(--line);border-radius:16px;padding:6px 12px;font-size:11px;color:var(--text);text-decoration:none;background:var(--bg)}
+.pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
+.pstats div{border:1px solid var(--line);border-radius:6px;padding:9px 4px}.pstats b{display:block;font-size:16px}.pstats small{font-size:10px;color:var(--muted)}
+.auth{max-width:320px;margin:20px auto 0}
+.auth h1{font-size:22px;margin-bottom:4px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}
+.seg button{background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:9px;font-size:13px;color:var(--muted)}
+.seg button.on{background:#06142a;border-color:var(--line2);color:var(--blue)}
+.auth a.lnk,a.lnk{display:block;color:var(--blue);font-size:12px;margin-top:8px;text-decoration:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.thumb{aspect-ratio:1;border-radius:6px;border:1px solid var(--line);display:grid;place-items:end start;padding:8px;font-size:11px;color:#cfe;background:linear-gradient(135deg,#052a45,#02060d)}
+.thumb:nth-child(3n){background:linear-gradient(135deg,#2b1b0a,#02060d)}
+.item .p{color:var(--gold);font-weight:700;font-size:13px;margin:4px 0 8px}
+pre{background:#020509;border:1px solid var(--line);border-radius:6px;padding:12px;font-size:11px;overflow:auto;color:#a9c9ff;margin-top:10px}
+/* assistant */
+.chat{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;min-height:200px}
+.msg{max-width:86%;padding:9px 12px;border-radius:12px;font-size:13px;white-space:pre-wrap}
+.msg.me{align-self:flex-end;background:#0b3a70}.msg.ai{align-self:flex-start;background:var(--card);border:1px solid var(--line)}
+.sugg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.sugg button{background:var(--bg);border:1px solid var(--line2);border-radius:16px;padding:5px 10px;font-size:11px;color:var(--muted)}
+.fab{position:fixed;right:14px;bottom:86px;z-index:28;background:var(--blue);color:#fff;border:0;border-radius:24px;padding:10px 16px;font-weight:700;font-size:13px;box-shadow:0 6px 20px rgba(11,147,255,.4)}
+/* admin */
+.atabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none}.atabs::-webkit-scrollbar{display:none}
+.atabs button{flex:none;background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:7px 13px;font-size:12px;color:var(--muted)}
+.atabs button.on{background:#2a2108;border-color:#4a3a14;color:var(--gold)}
+.urow{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px}
+.urow .top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px}
+.urow .acts{display:flex;gap:6px;flex-wrap:wrap}
+.urow .acts button{background:var(--bg);border:1px solid var(--line2);border-radius:6px;padding:5px 9px;font-size:11px}
+.copyrow{display:flex;gap:6px;margin-bottom:8px}.copyrow input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line2);border-radius:7px;padding:9px;font-size:11px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(8px + env(safe-area-inset-bottom))}
+nav button{background:none;border:1px solid transparent;border-radius:8px;padding:7px 2px;font-size:10px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:6px}
+nav button::before{content:"";width:5px;height:5px;border-radius:50%;background:#5d6e8a}
+nav button.on{background:#06142a;border-color:var(--line2);color:var(--blue)}nav button.on::before{background:var(--blue)}
+#sheet{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.7);display:none;align-items:flex-end}
+#sheet.open{display:flex}
+#sheet .box{background:var(--card);border-top:1px solid var(--line2);border-radius:14px 14px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:760px;margin:0 auto;max-height:88vh;overflow:auto}
+#sheet h3{font-size:17px;margin-bottom:8px}#sheet p{font-size:13px;margin-bottom:8px}#sheet .btn{margin-top:10px}
+.looks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.looks button{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px;font-size:11px}
+.looks canvas{width:100%;border-radius:5px;display:block;margin-bottom:4px}
+#toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#0b2a52;border:1px solid var(--line2);padding:9px 14px;border-radius:8px;font-size:12px;z-index:260;display:none;max-width:90%;text-align:center}
+#confetti{position:fixed;inset:0;z-index:250;pointer-events:none}
+#splash{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;animation:splashOut .6s ease 2.7s forwards}
+#splash .mark{width:54px;height:54px;border-radius:15px;background:#07244a;border:1px solid var(--line2);display:grid;place-items:center;animation:markIn .7s cubic-bezier(.2,.9,.3,1.2) both}
+#splash .mark::after{content:"";width:16px;height:16px;border-radius:50%;background:var(--blue);animation:pulse 1.4s ease-out .7s 2}
+#splash .word{display:flex;gap:.12em;font-size:44px;font-weight:800;letter-spacing:.08em}
+#splash .word span{display:inline-block;opacity:0;transform:translateY(26px) scale(.8);animation:letterIn .55s cubic-bezier(.2,.9,.3,1.2) forwards;animation-delay:calc(.5s + var(--i)*.14s)}
+#splash .word span:nth-child(3){color:var(--blue)}
+#splash .bar{width:120px;height:3px;border-radius:2px;background:#10213d;overflow:hidden}
+#splash .bar i{display:block;height:100%;width:100%;background:var(--blue);transform:translateX(-100%);animation:bar 1.5s ease-in-out 1.1s forwards}
+@keyframes markIn{from{opacity:0;transform:scale(.4) rotate(-20deg)}to{opacity:1;transform:none}}
+@keyframes letterIn{to{opacity:1;transform:none}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(11,147,255,.55)}100%{box-shadow:0 0 0 22px rgba(11,147,255,0)}}
+@keyframes bar{to{transform:translateX(0)}}
+@keyframes splashOut{to{opacity:0;visibility:hidden}}
+@media(prefers-reduced-motion:reduce){#splash,#splash *{animation-duration:.01s!important;animation-delay:0s!important}#splash{animation-delay:.8s!important}}
+</style>
+</head>
+<body>
+<div id="err"></div>
+<div id="splash" aria-hidden="true"><div class="mark"></div><div class="word"><span style="--i:0">V</span><span style="--i:1">I</span><span style="--i:2">S</span><span style="--i:3">O</span><span style="--i:4">L</span></div><div class="bar"><i></i></div></div>
+<noscript><p style="padding:16px;color:#fff">VISOL a besoin de JavaScript. Ouvrez ce fichier dans Chrome.</p></noscript>
+
+<header>
+  <button class="logo" data-go="accueil" aria-label="Accueil VISOL"><i></i>VISOL</button>
+  <div class="hbtns">
+    <button class="burger" id="burger" aria-label="Menu">☰</button>
+    <button class="icon-btn" id="hUser" data-go="connexion" aria-label="Compte">⇥</button>
+  </div>
+</header>
+<div id="menu" role="dialog" aria-label="Menu"><div class="grid" id="menuGrid"></div></div>
+
+<main>
+<section class="page" id="p-accueil"></section>
+
+<section class="page" id="p-studio">
+  <div class="eyebrow">Espace de travail</div>
+  <h1>Studio</h1>
+  <div class="studio">
+    <div class="toolbar">
+      <button id="bOpen">▣ Ouvrir</button>
+      <button id="bCmp" aria-label="Avant / après">⇄ Avant/Après</button>
+      <button id="bZoomOut" aria-label="Zoom arrière">−</button><span id="zoomVal">100%</span><button id="bZoomIn" aria-label="Zoom avant">+</button>
+      <button id="bFit" aria-label="Ajuster">⤢</button>
+      <button id="bUndo" aria-label="Annuler">↺</button><button id="bRedo" aria-label="Rétablir">↻</button>
+      <span class="fname" id="fname">démo.jpg</span>
+    </div>
+    <div class="workspace">
+      <div class="tools">
+        <button class="on" data-tool="hand" aria-label="Main">✋</button>
+        <button data-tool="zoom" aria-label="Zoom">⌕</button>
+        <button data-tool="erase" aria-label="Gomme (arrière-plan)">✂</button>
+        <button data-tool="restore" aria-label="Restaurer">✎</button>
+        <button data-tool="text" aria-label="Texte">T</button>
+      </div>
+      <div class="canvas" id="canvas" data-bg="checker">
+        <span class="tag" id="tag">ORIGINAL</span>
+        <canvas id="cv" width="10" height="10"></canvas>
+        <span class="hint" id="hint">Outil main : glisser · molette : zoom</span>
+      </div>
+    </div>
+    <div class="sfoot">
+      <button class="reset" id="bReset">↺ Tout réinitialiser</button>
+      <button class="btn sm" id="bExport">⤓ Exporter</button>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="panel" id="panel"></div>
+    <div class="trial" id="trialBar"></div>
+    <input type="file" id="file" accept="image/*" hidden>
+  </div>
+</section>
+
+<section class="page" id="p-assistant">
+  <div class="eyebrow">Réservé aux abonnés Pro et Gold</div>
+  <h1>Assistant IA</h1>
+  <div id="aiBody"></div>
+</section>
+
+<section class="page" id="p-academy">
+  <div class="eyebrow">Semaine 14</div><h1>Academy</h1>
+  <div class="card" style="margin-bottom:16px">
+    <div class="eyebrow">Leçon 14 · Lumière</div>
+    <div class="lesson-title">Sculpter le portrait à la lumière rasante</div>
+    <p class="muted">Un exercice guidé de 12 minutes pour maîtriser le contraste directionnel.</p>
+    <div class="progress"><i style="width:66%"></i></div>
+    <button class="btn" data-go="studio">Ouvrir l’exercice dans le Studio</button>
+  </div>
+  <div class="sec-head"><h2>Leçons</h2><small>14 leçons</small></div>
+  <div class="list" id="lessons"></div>
+</section>
+
+<section class="page" id="p-community">
+  <div class="eyebrow">Récents</div><h1>Community</h1>
+  <textarea class="field" id="postText" placeholder="Partagez une astuce, un preset ou une question…"></textarea>
+  <button class="btn sm" id="postBtn" style="margin-bottom:16px">Publier</button>
+  <div id="posts"></div>
+</section>
+
+<section class="page" id="p-portfolio"><div class="eyebrow">Aperçu</div><h1>Portfolio</h1><div class="grid2" id="folio"></div></section>
+
+<section class="page" id="p-cloud"><div class="eyebrow">Aperçu · stockage en ligne bientôt relié à votre compte</div><h1>Cloud</h1>
+  <div class="progress"><i style="width:5.5%"></i></div><div class="list" id="cloud" style="margin-top:14px"></div></section>
+
+<section class="page" id="p-dev"><div class="eyebrow">SDK</div><h1>Développeurs</h1>
+  <p class="muted">Branchez votre propre modèle de retouche dans le Studio et partagez-le avec la Community.</p>
+<pre>import { Visol } from "visol-sdk";
+
+Visol.registerModel({
+  name: "mon-modele",
+  run: (image, options) =&gt; retouche(image, options)
+});</pre></section>
+
+<section class="page" id="p-marketplace"><div class="eyebrow">Aperçu · échanges entre utilisateurs</div><h1>Marketplace</h1><div class="grid2" id="market"></div></section>
+
+<section class="page" id="p-abonnements"><div class="eyebrow">Choisir une formule</div><h1>Abonnements</h1>
+  <div id="plans-page"></div>
+  <p class="muted" style="margin-top:14px;font-size:12px">Paiement manuel par M-Pesa pour le moment. Votre compte est activé après vérification de la preuve de paiement.</p></section>
+
+<section class="page" id="p-psmylie"></section>
+<section class="page" id="p-nouveautes"><div class="eyebrow">Dernières mises à jour</div><h1>Nouveautés</h1><div id="news"></div></section>
+<section class="page" id="p-profil"></section>
+<section class="page" id="p-connexion"></section>
+<section class="page" id="p-admin"></section>
+</main>
+
+<button class="fab" id="fab" data-go="assistant">✦ IA</button>
+<nav id="nav">
+  <button data-go="accueil">Accueil</button>
+  <button data-go="studio">Studio</button>
+  <button data-go="academy">Academy</button>
+  <button data-go="community">Community</button>
+  <button data-go="profil">Profil</button>
+</nav>
+<div id="sheet"><div class="box" id="sheetBox"></div></div>
+<div id="toast"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+window.onerror=function(m,u,l){var e=document.getElementById('err');e.style.display='block';e.textContent='Erreur : '+m+' (ligne '+l+')';};
+document.body.classList.add('js');
+document.getElementById('splash').addEventListener('click',function(){this.style.display='none'});
+
+/* ================= Utilitaires & stockage ================= */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const mem={};
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return k in mem?mem[k]:d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){mem[k]=v}}};
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",3000)}
+function sheet(html){$("#sheetBox").innerHTML=html;$("#sheet").classList.add("open")}
+function closeSheet(){$("#sheet").classList.remove("open")}
+$("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
+async function H(s){try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}}catch(e){}
+  let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "d"+(h>>>0).toString(16)}
+const DAY=864e5;
+const dk=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const fdate=t=>new Date(t).toLocaleDateString("fr-FR");
+
+const DEFCFG={name:"P’smylie Market",handle:"@P’smylie_market",bio:"P’smylie Market accompagne photographes, créateurs et passionnés d’image avec VISOL, un espace moderne où l’intelligence artificielle accélère la retouche sans remplacer la créativité humaine. Notre ambition : rendre chaque image plus forte, plus précise et fidèle à votre vision.",
+  phone:"+243 823 658 255",email:"primenike83@gmail.com",mpesa:"",proPrice:8,goldPrice:24,currency:"€",announcement:"",aiEndpoint:"",
+  socials:{facebook:"",instagram:"",whatsapp:"243823658255",tiktok:"",youtube:"",x:"",telegram:""}};
+let USERS=LS.get("visol.users",{});
+let CFG=(function(){const c=LS.get("visol.cfg",{});return Object.assign({},DEFCFG,c,{socials:Object.assign({},DEFCFG.socials,c.socials||{})})})();
+let REQS=LS.get("visol.reqs",[]);
+let POSTS=LS.get("visol.posts",[["J’ai branché un modèle de retouche dans le Studio via le SDK — le rendu est bluffant.","Yann · développeur · il y a 2 h"],["Nouveau preset argentique partagé dans la marketplace, libre de droits.","Léa · photographe · hier"]]);
+let SESSION=LS.get("visol.session",null);
+const ADMIN_NAME="Loukombo Pierre";
+const normN=x=>x.trim().toLowerCase().replace(/\s+/g," ");
+const ADMIN_DEFAULT=["bee0b4e0de3ece6de0c9aba807a8c08267b9c8c759ea9988e413067997dc09ad","d233dd980"];
+let ADMIN_OVR=LS.get("visol.adminhash",null);
+async function adminOk(n,pw){const h=await H("admin|"+normN(n)+"|"+pw);return (ADMIN_OVR?[ADMIN_OVR]:ADMIN_DEFAULT).includes(h)}
+let isAdmin=false;try{isAdmin=sessionStorage.getItem("visol.adm")==="1"}catch(e){}
+const saveAll=()=>{LS.set("visol.users",USERS);LS.set("visol.cfg",CFG);LS.set("visol.reqs",REQS);LS.set("visol.posts",POSTS)};
+const cur=()=>SESSION&&USERS[SESSION]||null;
+const planActive=u=>!!(u&&u.plan&&u.planUntil>Date.now());
+const hasPro=()=>isAdmin||planActive(cur());
+function trial(u){const dayN=Math.floor((Date.now()-u.created)/DAY)+1;const expired=dayN>7;const used=(u.usage&&u.usage[dk()])||0;return{dayN:Math.min(dayN,7),expired,used,left:expired?0:Math.max(0,3-used)}}
+function socialUrl(k,v){v=(v||"").trim();if(!v)return"";if(/^https?:\/\//i.test(v))return v;v=v.replace(/^@/,"");
+  return({facebook:"https://facebook.com/",instagram:"https://instagram.com/",whatsapp:"https://wa.me/",tiktok:"https://tiktok.com/@",youtube:"https://youtube.com/@",x:"https://x.com/",telegram:"https://t.me/"}[k]||"")+(k==="whatsapp"?v.replace(/\D/g,""):v)}
+const SOCNAMES={facebook:"Facebook",instagram:"Instagram",whatsapp:"WhatsApp",tiktok:"TikTok",youtube:"YouTube",x:"X",telegram:"Telegram"};
+function socialsHTML(){const l=Object.keys(SOCNAMES).filter(k=>socialUrl(k,CFG.socials[k])).map(k=>`<a href="${esc(socialUrl(k,CFG.socials[k]))}" target="_blank" rel="noopener">${SOCNAMES[k]}</a>`);return l.length?`<div class="socials">${l.join("")}</div>`:""}
+const baseUrl=()=>location.href.split("#")[0];
+
+/* ================= Navigation ================= */
+const PAGES=[["accueil","Accueil"],["studio","Studio"],["assistant","Assistant IA"],["academy","Academy"],["community","Community"],["portfolio","Portfolio"],["cloud","Cloud"],["dev","Développeurs"],["marketplace","Marketplace"],["abonnements","Abonnements"],["psmylie","P’smylie Market"],["nouveautes","Nouveautés"],["profil","Profil"]];
+const PUBLIC=["accueil","connexion","abonnements","psmylie","nouveautes","dev","admin"];
+let pending=null,curPage="accueil";
+function buildMenu(){$("#menuGrid").innerHTML=PAGES.map(p=>`<button data-go="${p[0]}">${p[1]}</button>`).join("")+(isAdmin?`<button class="adm" data-go="admin">Administration</button>`:"")}
+function go(id){
+  if(!PUBLIC.includes(id)&&!cur()&&!isAdmin){pending=id;id="connexion"}
+  curPage=id;
+  $$(".page").forEach(p=>p.classList.toggle("active",p.id==="p-"+id));
+  $$("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===id));
+  $("#menu").classList.remove("open");$("#burger").textContent="☰";
+  $("#fab").style.display=(id==="assistant"||id==="admin")?"none":"block";
+  buildMenu();
+  const R={accueil:renderHome,connexion:renderAuth,profil:renderProfile,psmylie:renderPsmylie,assistant:renderAI,admin:renderAdmin,abonnements:renderPlansPage,community:renderPosts,studio:()=>{renderTabs();renderPanel();refreshTrial();scheduleRender()}};
+  if(R[id])R[id]();
+  window.scrollTo(0,0);
+}
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g){go(g.dataset.go);return}
+  const pl=e.target.closest("[data-plan]");if(pl){choosePlan(pl.dataset.plan);return}
+  const a=e.target.closest("[data-act]");if(a){act(a.dataset.act,a.dataset)}
+});
+$("#burger").onclick=()=>{const m=$("#menu");m.classList.toggle("open");$("#burger").textContent=m.classList.contains("open")?"×":"☰"};
+window.addEventListener("hashchange",()=>{if(location.hash==="#admin")go("admin")});
+
+/* ================= Comptes & essais ================= */
+function needLogin(){pending=curPage;sheet(`<h3>Connectez-vous pour continuer</h3><p>Créez un compte gratuit : vous avez <b>3 essais par jour pendant 7 jours</b>.</p><button class="btn" data-act="closeAuth" data-m="signup">Créer mon compte gratuit</button><button class="btn ghost" data-act="closeAuth" data-m="login">J’ai déjà un compte</button>`)}
+function upsell(kind){
+  const t=kind==="expired"?["Votre semaine d’essai est terminée","Passez Pro ou Gold pour continuer à retoucher sans limite."]:["Vos 3 essais du jour sont utilisés","Revenez demain pour 3 nouveaux essais, ou passez Pro ou Gold pour retoucher sans limite."];
+  sheet(`<h3>${t[0]}</h3><p>${t[1]}</p><button class="btn gold" data-go="abonnements" onclick="closeSheet()">Voir Pro et Gold</button><button class="btn ghost" onclick="closeSheet()">Plus tard</button>`)}
+function useTrial(){
+  if(isAdmin)return true;
+  const u=cur();if(!u){needLogin();return false}
+  if(u.blocked){sheet(`<h3>Compte suspendu</h3><p>Contactez l’administrateur : ${esc(CFG.email)}</p><button class="btn ghost" onclick="closeSheet()">Fermer</button>`);return false}
+  if(planActive(u))return true;
+  const t=trial(u);if(t.expired){upsell("expired");return false}if(t.left<=0){upsell("daily");return false}
+  u.usage=u.usage||{};u.usage[dk()]=t.used+1;u.total=(u.total||0)+1;saveAll();refreshTrial();return true}
+function needPro(what){if(hasPro())return true;
+  sheet(`<h3>Fonction réservée aux abonnés</h3><p>${esc(what)} est disponible avec <b>Pro</b> ou <b>Gold</b>.</p><button class="btn gold" data-go="abonnements" onclick="closeSheet()">Voir les abonnements</button><button class="btn ghost" onclick="closeSheet()">Fermer</button>`);return false}
+function refreshTrial(){
+  const el=$("#trialBar");if(!el)return;const u=cur();
+  if(isAdmin)el.innerHTML="Mode <b>administrateur</b> · tout est débloqué";
+  else if(!u)el.innerHTML="Connectez-vous pour retoucher · <b>3 essais gratuits par jour</b> pendant 7 jours";
+  else if(planActive(u))el.innerHTML=`Formule <b>${esc(u.plan)}</b> · retouches illimitées jusqu’au ${fdate(u.planUntil)}`;
+  else{const t=trial(u);el.innerHTML=t.expired?"Essai terminé · <b>passez Pro ou Gold</b>":`Jour <b>${t.dayN}/7</b> · essais restants aujourd’hui : <b>${t.left}/3</b>`}
+  $("#hUser").style.borderColor=(u||isAdmin)?"#2fd08a":"";
+}
+
+/* ================= Accueil ================= */
+let demo={before:null,after:null};
+function renderHome(){
+  const u=cur(),el=$("#p-accueil");
+  const ban=CFG.announcement?`<div class="banner">📣 ${esc(CFG.announcement)}</div>`:"";
+  const ba=`<div class="ba" id="ba"><canvas id="baB"></canvas><canvas class="after" id="baA"></canvas><div class="handle" id="baH"></div><span class="lab" style="left:10px">AVANT</span><span class="lab" style="right:10px">APRÈS</span><input type="range" id="baR" min="0" max="100" value="50" aria-label="Comparer avant et après"></div>`;
+  const feats=`<div class="feat"><div class="card"><b>Retouche IA en 1 tap</b><span>Lumière, couleurs, détails.</span></div><div class="card"><b>Détourage pro</b><span>Fond transparent en PNG.</span></div><div class="card"><b>Outils type Photoshop</b><span>Courbes, netteté, texte, recadrage.</span></div><div class="card"><b>Assistant IA</b><span>Des conseils à chaque étape.</span></div></div>`;
+  if(!u&&!isAdmin){
+    el.innerHTML=`${ban}<div class="hero"><div class="eyebrow">Retouche photo assistée par IA</div><h1>Vos photos, comme un pro, en quelques secondes.</h1>
+      <p class="lead">Glissez pour voir la différence. Essayez gratuitement : <b>3 essais par jour pendant 7 jours</b>, sans carte bancaire.</p>${ba}
+      <div class="cta"><button class="btn" data-act="goAuth" data-m="signup">Créer mon compte gratuit</button><button class="btn ghost" data-act="goAuth" data-m="login">J’ai déjà un compte</button></div></div>
+      <div class="sec-head"><h2>Tout pour sublimer vos images</h2></div>${feats}
+      <div class="sec-head"><h2>Ils en parlent</h2><small>Community</small></div>${POSTS.slice(0,2).map(quoteHTML).join("")}
+      <div class="sec-head"><h2>Abonnements</h2></div>${plansHTML()}
+      <div class="sec-head"><h2>Suivez-nous</h2></div>${socialsHTML()||'<p class="muted" style="font-size:12px">Bientôt sur les réseaux.</p>'}`;
+  }else{
+    let meter="",line="";
+    if(u&&!isAdmin&&!planActive(u)){const t=trial(u);meter=`<div class="meter">${[1,2,3,4,5,6,7].map(i=>`<i class="${i<t.dayN?"done":i===t.dayN&&!t.expired?"on":""}"></i>`).join("")}</div>`;line=t.expired?"Semaine d’essai terminée":`Jour ${t.dayN}/7 · ${t.left} essai${t.left>1?"s":""} restant${t.left>1?"s":""} aujourd’hui`}
+    else if(planActive(u))line="Formule "+u.plan+" · retouches illimitées";else line="Mode administrateur";
+    const nm=isAdmin?ADMIN_NAME.split(" ").pop():(u.name||u.email.split("@")[0]);
+    el.innerHTML=`${ban}<div class="eyebrow">Tableau de bord</div><h1>Bon retour, ${esc(nm)} — vos images se développent.</h1>
+      <div class="chips"><span class="chip ${planActive(u)||isAdmin?"gold":"green"}">${esc(line)}</span></div>${meter}
+      <div class="stats" style="margin-top:12px"><div class="card"><small>Retouches réalisées</small><b>${isAdmin?"∞":(u.total||0)}</b></div><div class="card"><small>Formule</small><b>${isAdmin?"Admin":planActive(u)?esc(u.plan):"Essai"}</b></div></div>
+      <div class="sec-head"><h2>Studio</h2><small>Glissez pour comparer</small></div>${ba}
+      <button class="btn" style="margin-top:10px" data-go="studio">Ouvrir le Studio</button>
+      <button class="btn ghost" style="margin-top:8px" data-act="magic">✦ Surprise : 6 looks en un tap</button>
+      <div class="sec-head"><h2>Academy</h2><small>Semaine 14</small></div>
+      <div class="card"><div class="eyebrow">Leçon 14 · Lumière</div><div class="lesson-title">Sculpter le portrait à la lumière rasante</div><p class="muted">Un exercice guidé de 12 minutes.</p><div class="progress"><i style="width:66%"></i></div><button class="btn" data-go="academy">Continuer l’exercice</button></div>
+      <div class="sec-head"><h2>Community</h2><small>Récents</small></div>${POSTS.slice(0,2).map(quoteHTML).join("")}
+      <div class="sec-head"><h2>Abonnements</h2></div>${plansHTML()}`;
+  }
+  drawBA();
+}
+function quoteHTML(p){return `<div class="quote"><p>« ${esc(p[0])} »</p><small>${esc(p[1])}</small></div>`}
+function plansHTML(){const c=esc(CFG.currency);return `<div class="plans"><div class="plan"><h3>VISOL Pro</h3><div class="price">${esc(CFG.proPrice)} ${c}/mois</div><ul><li>Retouches illimitées</li><li>Détourage d’arrière-plan</li><li>Assistant IA</li><li>Export sans filigrane</li></ul><button class="btn ghost" data-plan="Pro">Choisir</button></div>
+<div class="plan gold"><h3>VISOL Gold</h3><div class="price">${esc(CFG.goldPrice)} ${c}/mois</div><ul><li>Tout VISOL Pro</li><li>Contenus exclusifs</li><li>Événements &amp; ateliers</li><li>Rencontres avec l’équipe VISOL selon disponibilité</li></ul><button class="btn gold" data-plan="Gold">Passer en Gold</button></div></div>`}
+function renderPlansPage(){$("#plans-page").innerHTML=plansHTML()}
+function drawBA(){
+  const b=$("#baB"),a=$("#baA");if(!b||!a)return;
+  if(!demo.before){demo.before=makeDemo();demo.after=document.createElement("canvas");renderTo(demo.after,demo.before,Object.assign({},DEF,PRESETS.auto,{vignette:30,sharpen:35}))}
+  [[b,demo.before],[a,demo.after]].forEach(([c,s])=>{c.width=s.width;c.height=s.height;c.getContext("2d").drawImage(s,0,0)});
+  const r=$("#baR");r.oninput=()=>{a.style.clipPath=`inset(0 0 0 ${r.value}%)`;$("#baH").style.left=r.value+"%"};
+}
+function makeDemo(){
+  const w=800,h=600,c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");
+  let g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,"#5b7a86");g.addColorStop(1,"#2d3a4a");x.fillStyle=g;x.fillRect(0,0,w,h);
+  x.fillStyle="rgba(255,255,255,.08)";for(let i=0;i<30;i++){x.beginPath();x.arc((i*137)%w,(i*89)%h,12+(i%5)*6,0,7);x.fill()}
+  x.fillStyle="#3d3530";x.beginPath();x.ellipse(400,500,230,170,0,Math.PI,0);x.fill();x.fillRect(170,500,460,100);
+  x.fillStyle="#a98569";x.fillRect(365,330,70,90);
+  x.fillStyle="#2a1d17";x.beginPath();x.ellipse(400,250,118,128,0,0,7);x.fill();
+  x.fillStyle="#b58d70";x.beginPath();x.ellipse(400,268,92,112,0,0,7);x.fill();
+  x.fillStyle="#2a1d17";x.beginPath();x.ellipse(400,175,100,60,0,Math.PI,0);x.fill();
+  x.fillStyle="#241915";x.beginPath();x.ellipse(365,262,9,5,0,0,7);x.ellipse(435,262,9,5,0,0,7);x.fill();
+  x.strokeStyle="#7d5446";x.lineWidth=5;x.beginPath();x.arc(400,310,26,.2,Math.PI-.2);x.stroke();
+  return c}
+
+/* ================= Moteur d’image ================= */
+const DEF={angle:0,rot:0,fx:0,fy:0,aspect:"orig",expo:100,contrast:100,shadows:0,highlights:0,sat:100,temp:0,bw:0,sepia:0,invert:0,sharpen:0,blur:0,vignette:0,grain:0,texts:[]};
+const PRESETS={auto:{expo:112,contrast:108,sat:118,temp:4},portrait:{expo:106,contrast:96,sat:104,temp:6,shadows:12},studio:{expo:118,contrast:114,sat:100,temp:-2,highlights:-10},details:{expo:102,contrast:122,sat:108,sharpen:45},cinema:{expo:96,contrast:128,sat:88,temp:-12,vignette:35,grain:12}};
+const LOOKS={"Cinéma":{contrast:128,sat:88,temp:-12,vignette:35,grain:12},"Doré":{expo:108,temp:28,sat:112,contrast:106,vignette:20},"Néon":{contrast:125,sat:160,temp:-18,expo:104,sharpen:25},"Noir & blanc":{bw:1,contrast:125,vignette:25,grain:14},"Rêve":{expo:112,contrast:92,sat:112,shadows:25,temp:8,blur:1},"Vintage":{sepia:55,contrast:108,sat:92,vignette:40,grain:25}};
+const ASP={orig:0,"1:1":1,"4:5":.8,"16:9":16/9,"9:16":9/16};
+const tmp=(w,h)=>{const c=document.createElement("canvas");c.width=Math.max(1,w|0);c.height=Math.max(1,h|0);return c};
+function renderTo(out,src,p,o){
+  o=o||{};const geo=!o.noGeo;const sw=src.width,sh=src.height;
+  const odd=geo&&(p.rot%2===1);const fw=odd?sh:sw,fh=odd?sw:sh;
+  const c1=tmp(fw,fh),x1=c1.getContext("2d");x1.save();x1.translate(fw/2,fh/2);
+  if(geo){const a=p.angle*Math.PI/180,k=Math.max(fw/fh,fh/fw),s=Math.cos(Math.abs(a))+Math.sin(Math.abs(a))*k;x1.rotate(p.rot*Math.PI/2+a);x1.scale(s*(p.fx?-1:1),s*(p.fy?-1:1))}
+  x1.drawImage(src,-sw/2,-sh/2);x1.restore();
+  let cw=fw,ch=fh;const r=geo?ASP[p.aspect]:0;if(r){if(fw/fh>r)cw=Math.round(fh*r);else ch=Math.round(fw/r)}
+  let c=tmp(cw,ch);c.getContext("2d").drawImage(c1,(fw-cw)/2,(fh-ch)/2,cw,ch,0,0,cw,ch);
+  if(p.blur>0){const f=1/(1+p.blur*.7),sm=tmp(cw*f,ch*f),sx=sm.getContext("2d");sx.imageSmoothingQuality="high";sx.drawImage(c,0,0,sm.width,sm.height);const c3=tmp(cw,ch),x3=c3.getContext("2d");x3.imageSmoothingQuality="high";x3.drawImage(sm,0,0,cw,ch);c=c3}
+  const ctx=c.getContext("2d"),id=ctx.getImageData(0,0,cw,ch),d=id.data;
+  const e=p.expo/100,ct=p.contrast/100,sa=p.sat/100,t=p.temp*.6,sh_=p.shadows*.6,hi=p.highlights*.6,se=p.sepia/100,gr=p.grain*.9;
+  const need=e!==1||ct!==1||sa!==1||t||sh_||hi||p.bw||se||p.invert||gr;
+  if(need)for(let i=0;i<d.length;i+=4){
+    if(d[i+3]===0)continue;
+    let R=d[i]*e+t,G=d[i+1]*e,B=d[i+2]*e-t;
+    if(sh_||hi){const l=(.3*R+.59*G+.11*B)/255,v=(1-l)*(1-l)*sh_+l*l*hi;R+=v;G+=v;B+=v}
+    if(ct!==1){R=(R-128)*ct+128;G=(G-128)*ct+128;B=(B-128)*ct+128}
+    const gy=.299*R+.587*G+.114*B;
+    if(p.bw){R=G=B=gy}else if(sa!==1){R=gy+(R-gy)*sa;G=gy+(G-gy)*sa;B=gy+(B-gy)*sa}
+    if(se){const tr=.393*R+.769*G+.189*B,tg=.349*R+.686*G+.168*B,tb=.272*R+.534*G+.131*B;R+=(tr-R)*se;G+=(tg-G)*se;B+=(tb-B)*se}
+    if(p.invert){R=255-R;G=255-G;B=255-B}
+    if(gr){const n=(Math.random()-.5)*gr*2;R+=n;G+=n;B+=n}
+    d[i]=R<0?0:R>255?255:R;d[i+1]=G<0?0:G>255?255:G;d[i+2]=B<0?0:B>255?255:B}
+  if(p.sharpen>0){const a=p.sharpen/100*1.1,cp=new Uint8ClampedArray(d),w4=cw*4;
+    for(let y=1;y<ch-1;y++)for(let x=1;x<cw-1;x++){const i=(y*cw+x)*4;for(let k=0;k<3;k++){const j=i+k;d[j]=cp[j]*(1+4*a)-a*(cp[j-4]+cp[j+4]+cp[j-w4]+cp[j+w4])}}}
+  ctx.putImageData(id,0,0);
+  if(p.vignette>0){ctx.save();ctx.globalCompositeOperation="source-atop";const g=ctx.createRadialGradient(cw/2,ch/2,Math.min(cw,ch)*.28,cw/2,ch/2,Math.max(cw,ch)*.75);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,`rgba(0,0,0,${p.vignette/100*.85})`);ctx.fillStyle=g;ctx.fillRect(0,0,cw,ch);ctx.restore()}
+  (p.texts||[]).forEach(tx=>{ctx.save();ctx.font=`700 ${tx.size/100*cw}px "Segoe UI",Arial,sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=tx.color;ctx.shadowColor="rgba(0,0,0,.55)";ctx.shadowBlur=cw*.006;ctx.fillText(tx.t,tx.x/100*cw,tx.y/100*ch);ctx.restore()});
+  out.width=cw;out.height=ch;const ox=out.getContext("2d");ox.clearRect(0,0,cw,ch);ox.drawImage(c,0,0);
+}
+
+/* ================= Studio ================= */
+const st={P:{...DEF,texts:[]},S:null,S0:null,Pv:null,Pv0:null,hist:[],redo:[],tool:"hand",tab:"ia",preset:"auto",zoom:1,x:0,y:0,cmp:false,bgDone:false,tol:30,soft:2,brush:30,bgv:"checker",name:"démo.jpg",raf:0};
+const cv=$("#cv");
+function setSource(img,name){
+  const maxS=2000,maxP=1000;let w=img.width,h=img.height,k=Math.min(1,maxS/Math.max(w,h));
+  st.S=tmp(w*k,h*k);st.S.getContext("2d").drawImage(img,0,0,st.S.width,st.S.height);
+  st.S0=tmp(st.S.width,st.S.height);st.S0.getContext("2d").drawImage(st.S,0,0);
+  const kp=Math.min(1,maxP/Math.max(st.S.width,st.S.height));
+  st.Pv=tmp(st.S.width*kp,st.S.height*kp);st.Pv.getContext("2d").drawImage(st.S,0,0,st.Pv.width,st.Pv.height);
+  st.Pv0=tmp(st.Pv.width,st.Pv.height);st.Pv0.getContext("2d").drawImage(st.Pv,0,0);
+  st.P={...DEF,texts:[]};st.hist=[];st.redo=[];st.bgDone=false;st.zoom=1;st.x=0;st.y=0;st.name=name||"photo.jpg";$("#fname").textContent=st.name;
+  scheduleRender();renderPanel();
+}
+function scheduleRender(){if(st.raf)return;st.raf=requestAnimationFrame(()=>{st.raf=0;doRender()})}
+function doRender(){
+  if(!st.Pv)return;const mask=st.tool==="erase"||st.tool==="restore";
+  const o=document.createElement("canvas");renderTo(o,st.Pv,st.cmp?{...DEF}:st.P,{noGeo:mask&&!st.cmp});
+  cv.width=o.width;cv.height=o.height;cv.getContext("2d").drawImage(o,0,0);
+  cv.style.transform=`translate(${st.x}px,${st.y}px) scale(${st.zoom})`;
+  $("#zoomVal").textContent=Math.round(st.zoom*100)+"%";
+  const mod=JSON.stringify({...st.P,texts:0})!==JSON.stringify({...DEF,texts:0})||st.P.texts.length||st.bgDone;
+  $("#tag").textContent=st.cmp?"ORIGINAL":(mod?"RETOUCHÉ":"ORIGINAL");
+  $("#canvas").dataset.bg=st.bgv;
+}
+function snapP(){st.hist.push({k:"p",v:JSON.stringify(st.P)});if(st.hist.length>30)st.hist.shift();st.redo=[]}
+function snapM(){const s=tmp(st.S.width,st.S.height),p=tmp(st.Pv.width,st.Pv.height);s.getContext("2d").drawImage(st.S,0,0);p.getContext("2d").drawImage(st.Pv,0,0);st.hist.push({k:"m",S:s,P:p,bg:st.bgDone});if(st.hist.length>6)st.hist.shift();st.redo=[]}
+function curEntry(k){if(k==="p")return{k:"p",v:JSON.stringify(st.P)};const s=tmp(st.S.width,st.S.height),p=tmp(st.Pv.width,st.Pv.height);s.getContext("2d").drawImage(st.S,0,0);p.getContext("2d").drawImage(st.Pv,0,0);return{k:"m",S:s,P:p,bg:st.bgDone}}
+function applyEntry(en){if(en.k==="p")st.P=JSON.parse(en.v);else{st.S.getContext("2d").clearRect(0,0,st.S.width,st.S.height);st.S.getContext("2d").drawImage(en.S,0,0);st.Pv.getContext("2d").clearRect(0,0,st.Pv.width,st.Pv.height);st.Pv.getContext("2d").drawImage(en.P,0,0);st.bgDone=en.bg}renderPanel();scheduleRender()}
+$("#bUndo").onclick=()=>{const en=st.hist.pop();if(!en)return;st.redo.push(curEntry(en.k));applyEntry(en)};
+$("#bRedo").onclick=()=>{const en=st.redo.pop();if(!en)return;st.hist.push(curEntry(en.k));applyEntry(en)};
+$("#bReset").onclick=()=>{snapP();st.P={...DEF,texts:[]};if(st.S0){st.S.getContext("2d").clearRect(0,0,st.S.width,st.S.height);st.S.getContext("2d").drawImage(st.S0,0,0);st.Pv.getContext("2d").clearRect(0,0,st.Pv.width,st.Pv.height);st.Pv.getContext("2d").drawImage(st.Pv0,0,0);st.bgDone=false}st.x=0;st.y=0;st.zoom=1;renderPanel();scheduleRender()};
+$("#bCmp").onclick=()=>{st.cmp=!st.cmp;$("#bCmp").style.color=st.cmp?"#0b93ff":"";scheduleRender()};
+$("#bZoomIn").onclick=()=>{st.zoom=Math.min(5,+(st.zoom+.15).toFixed(2));scheduleRender()};
+$("#bZoomOut").onclick=()=>{st.zoom=Math.max(.2,+(st.zoom-.15).toFixed(2));scheduleRender()};
+$("#bFit").onclick=()=>{st.zoom=1;st.x=0;st.y=0;scheduleRender()};
+$("#bOpen").onclick=()=>$("#file").click();
+$("#file").onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{setSource(im,f.name);toast("Photo ouverte");URL.revokeObjectURL(im.src)};im.onerror=()=>toast("Impossible de lire cette image");im.src=URL.createObjectURL(f);e.target.value=""};
+$("#canvas").addEventListener("wheel",e=>{e.preventDefault();st.zoom=Math.min(5,Math.max(.2,+(st.zoom+(e.deltaY<0?.12:-.12)).toFixed(2)));scheduleRender()},{passive:false});
+/* pointeur : main, zoom, pinceau */
+let drag=null,stroke=null;
+function toP(e){const r=cv.getBoundingClientRect();return[(e.clientX-r.left)/r.width*cv.width,(e.clientY-r.top)/r.height*cv.height]}
+function brushDot(x,y){
+  const rad=st.Pv.width*(st.brush/400),k=st.S.width/st.Pv.width,er=st.tool==="erase";
+  [[st.Pv,1,st.Pv0],[st.S,k,st.S0]].forEach(([c,m,orig])=>{const g=c.getContext("2d");g.save();g.beginPath();g.arc(x*m,y*m,rad*m,0,7);
+    if(er){g.globalCompositeOperation="destination-out";g.fill()}else{g.clip();g.drawImage(orig,0,0)}g.restore()});}
+$("#canvas").addEventListener("pointerdown",e=>{
+  if(e.target.closest(".tag,.hint"))return;
+  if(st.tool==="zoom"){st.zoom=Math.min(5,+(st.zoom+.3).toFixed(2));scheduleRender();return}
+  if(st.tool==="hand"||st.tool==="text"){drag={x:e.clientX-st.x,y:e.clientY-st.y};$("#canvas").setPointerCapture(e.pointerId);return}
+  if(st.tool==="erase"||st.tool==="restore"){if(!st.Pv)return;snapM();const[px,py]=toP(e);stroke={x:px,y:py};brushDot(px,py);$("#canvas").setPointerCapture(e.pointerId);scheduleRender()}
+});
+$("#canvas").addEventListener("pointermove",e=>{
+  if(drag){st.x=e.clientX-drag.x;st.y=e.clientY-drag.y;scheduleRender();return}
+  if(stroke){const[px,py]=toP(e),dx=px-stroke.x,dy=py-stroke.y,dist=Math.hypot(dx,dy),step=Math.max(1,st.Pv.width*(st.brush/400)/2);
+    for(let i=1;i<=dist/step;i++)brushDot(stroke.x+dx*i*step/dist,stroke.y+dy*i*step/dist);brushDot(px,py);stroke={x:px,y:py};scheduleRender()}});
+["pointerup","pointercancel"].forEach(n=>$("#canvas").addEventListener(n,()=>{drag=null;stroke=null}));
+/* outils gauche */
+function setTool(t){
+  if((t==="erase"||t==="restore")&&!needPro("Le détourage et la gomme d’arrière-plan"))return;
+  st.tool=t;$$(".tools button").forEach(b=>b.classList.toggle("on",b.dataset.tool===t));
+  $("#canvas").style.cursor=t==="hand"?"grab":t==="zoom"?"zoom-in":"crosshair";
+  $("#hint").textContent=({hand:"Outil main : glisser · molette : zoom",zoom:"Touchez pour zoomer",erase:"Gomme : effacez pour rendre transparent (aperçu remis droit)",restore:"Restaurer : repeignez pour rendre l’image d’origine",text:"Onglet Texte : ajoutez et placez votre texte"})[t];
+  if(t==="text"){st.tab="txt";renderTabs();renderPanel()}
+  scheduleRender()}
+$$(".tools button").forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+/* onglets */
+const TABS=[["ia","IA"],["lum","Lumière"],["col","Couleur"],["det","Détails"],["geo","Géométrie"],["txt","Texte"],["bg","Arrière-plan"]];
+function renderTabs(){$("#tabs").innerHTML=TABS.map(t=>`<button data-tab="${t[0]}" class="${st.tab===t[0]?"on":""}">${t[1]}${t[0]==="bg"?" ★":""}</button>`).join("")}
+$("#tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;st.tab=b.dataset.tab;renderTabs();renderPanel()});
+const SL={lum:[["expo","Exposition",0,200],["contrast","Contraste",0,200],["shadows","Ombres",-100,100],["highlights","Hautes lumières",-100,100]],col:[["sat","Saturation",0,200],["temp","Température",-50,50],["sepia","Sépia",0,100]],det:[["sharpen","Netteté",0,100],["blur","Flou",0,20],["vignette","Vignettage",0,100],["grain","Grain",0,100]],geo:[["angle","Angle (redresser)",-45,45]]};
+const sl=(k,l,mn,mx,v)=>`<div class="slider"><div class="t"><span>${l}</span><b id="v-${k}">${v}</b></div><input type="range" data-k="${k}" min="${mn}" max="${mx}" value="${v}"></div>`;
+function renderPanel(){
+  const P=st.P,el=$("#panel");let h="";
+  if(st.tab==="ia"){
+    h=`<div class="lbl">Assistant IA</div><div class="presets">${Object.keys(PRESETS).map(k=>`<button class="${st.preset===k?"on":""}" data-act="preset" data-p="${k}">${({auto:"Retouche auto",portrait:"Portrait naturel",studio:"Lumière studio",details:"Détails +",cinema:"Cinéma"})[k]}</button>`).join("")}</div>
+    <button class="btn" data-act="auto">✧ Retouche automatique</button><button class="btn ghost" style="margin-top:8px" data-act="magic">✦ Surprise : 6 looks en un tap</button>`}
+  else if(SL[st.tab]){h=SL[st.tab].map(s=>sl(s[0],s[1],s[2],s[3],P[s[0]])).join("");
+    if(st.tab==="col")h+=`<div class="row2" style="grid-template-columns:1fr 1fr"><button class="pbtn ${P.bw?"on":""}" data-act="tog" data-k="bw">Noir &amp; blanc</button><button class="pbtn ${P.invert?"on":""}" data-act="tog" data-k="invert">Inverser</button></div>`;
+    if(st.tab==="geo")h+=`<div class="lbl">Rotation &amp; miroir</div><div class="row2"><button class="pbtn" data-act="rot" data-d="-1">⟲ 90°</button><button class="pbtn" data-act="rot" data-d="1">⟳ 90°</button><button class="pbtn ${P.fx?"on":""}" data-act="tog" data-k="fx">Miroir H</button></div><div class="row2"><button class="pbtn ${P.fy?"on":""}" data-act="tog" data-k="fy">Miroir V</button></div>
+      <div class="lbl">Recadrage</div><div class="row2" style="grid-template-columns:repeat(5,1fr)">${["orig","1:1","4:5","16:9","9:16"].map(a=>`<button class="pbtn ${P.aspect===a?"on":""}" data-act="asp" data-a="${a}">${a==="orig"?"Libre":a}</button>`).join("")}</div>`}
+  else if(st.tab==="txt"){const t=P.texts[P.texts.length-1];
+    h=`<input class="field" id="txIn" placeholder="Votre texte" maxlength="60"><button class="btn" data-act="addtext">Ajouter au centre</button>`;
+    if(t)h+=`<div class="lbl">Dernier texte : « ${esc(t.t)} »</div>${sl("tx_size","Taille",2,30,t.size)}${sl("tx_x","Position horizontale",0,100,t.x)}${sl("tx_y","Position verticale",0,100,t.y)}<label class="fl">Couleur</label><input type="color" id="txColor" value="${t.color}" style="width:100%;height:38px;background:none;border:1px solid var(--line2);border-radius:7px"><button class="btn red" style="margin-top:10px" data-act="deltext">Supprimer ce texte</button>`}
+  else if(st.tab==="bg"){
+    h=(hasPro()?"":`<div class="lock">🔒 Détourage et gomme : réservés aux abonnés <b>Pro</b> et <b>Gold</b>.</div>`)+
+    `<p class="muted" style="font-size:12px;margin-bottom:6px">Supprime un fond uni ou peu chargé et rend l’image transparente (export PNG). Pour un fond complexe, affinez ensuite avec la gomme et « restaurer ».</p>
+    ${sl("tol","Tolérance",5,80,st.tol)}${sl("soft","Adoucir les bords",0,8,st.soft)}
+    <button class="btn" data-act="bgremove">✂ Supprimer l’arrière-plan</button>
+    <div class="lbl">Retouche du détourage</div><div class="row2" style="grid-template-columns:1fr 1fr"><button class="pbtn ${st.tool==="erase"?"on":""}" data-act="tool" data-t="erase">Gomme</button><button class="pbtn ${st.tool==="restore"?"on":""}" data-act="tool" data-t="restore">Restaurer</button></div>
+    ${sl("brush","Taille du pinceau",4,60,st.brush)}
+    <div class="lbl">Fond d’aperçu</div><div class="row2" style="grid-template-columns:repeat(4,1fr)">${[["checker","Damier"],["white","Blanc"],["black","Noir"],["blue","Bleu"]].map(b=>`<button class="pbtn ${st.bgv===b[0]?"on":""}" data-act="bgv" data-v="${b[0]}">${b[1]}</button>`).join("")}</div>`}
+  el.innerHTML=h;refreshTrial();
+}
+$("#panel").addEventListener("pointerdown",e=>{if(e.target.matches("input[type=range]")&&!/^(tol|soft|brush)$/.test(e.target.dataset.k)&&!/^tx_/.test(e.target.dataset.k))snapP()});
+$("#panel").addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="txColor"){const x=st.P.texts[st.P.texts.length-1];if(x){x.color=t.value;scheduleRender()}return}
+  const k=t.dataset&&t.dataset.k;if(!k||t.type!=="range")return;const v=+t.value;
+  const lab=$("#v-"+k);if(lab)lab.textContent=v;
+  if(k==="tol")st.tol=v;else if(k==="soft")st.soft=v;else if(k==="brush")st.brush=v;
+  else if(k.startsWith("tx_")){const x=st.P.texts[st.P.texts.length-1];if(x){x[k==="tx_size"?"size":k==="tx_x"?"x":"y"]=v}}
+  else st.P[k]=v;
+  scheduleRender()});
+
+/* ================= Actions Studio ================= */
+function confetti(){
+  const c=$("#confetti"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+  const cols=["#0b93ff","#ffc247","#2fd08a","#ff5a6e","#fff"],ps=Array.from({length:90},()=>({x:innerWidth/2,y:innerHeight*.6,vx:(Math.random()-.5)*14,vy:-Math.random()*16-4,s:4+Math.random()*5,c:cols[(Math.random()*5)|0],r:Math.random()*6}));
+  let f=0;(function loop(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.vy+=.45;p.x+=p.vx;p.y+=p.vy;p.r+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);x.restore()});if(++f<90)requestAnimationFrame(loop);else x.clearRect(0,0,c.width,c.height)})()}
+function applyLook(o){snapP();st.P={...st.P,...DEF,texts:st.P.texts,angle:st.P.angle,rot:st.P.rot,fx:st.P.fx,fy:st.P.fy,aspect:st.P.aspect,...o};renderPanel();scheduleRender()}
+function magic(){
+  if(!cur()&&!isAdmin){needLogin();return}
+  if(!st.Pv)setSource(makeDemo(),"démo.jpg");
+  const k=Math.min(1,200/st.Pv.width),th=tmp(st.Pv.width*k,st.Pv.height*k);th.getContext("2d").drawImage(st.Pv,0,0,th.width,th.height);
+  sheet(`<h3>✦ Surprise : 6 looks</h3><p class="muted">Touchez un look pour l’appliquer à votre photo (1 essai).</p><div class="looks" id="looks"></div><button class="btn ghost" onclick="closeSheet()">Fermer</button>`);
+  const box=$("#looks");Object.keys(LOOKS).forEach(n=>{const b=document.createElement("button"),c=document.createElement("canvas");renderTo(c,th,{...DEF,...LOOKS[n]});b.appendChild(c);b.appendChild(document.createTextNode(n));
+    b.onclick=()=>{if(!useTrial())return;closeSheet();applyLook(LOOKS[n]);confetti();toast("Look « "+n+" » appliqué");if(curPage!=="studio")go("studio")};box.appendChild(b)})}
+function bgRemove(){
+  if(!st.S0)return;const w=st.S0.width,h=st.S0.height,src=st.S0.getContext("2d").getImageData(0,0,w,h),d=src.data;
+  const bk=new Map(),add=(x,y)=>{const i=(y*w+x)*4,key=(d[i]>>5)+","+(d[i+1]>>5)+","+(d[i+2]>>5),b=bk.get(key)||{n:0,r:0,g:0,b:0};b.n++;b.r+=d[i];b.g+=d[i+1];b.b+=d[i+2];bk.set(key,b)};
+  const step=Math.max(1,Math.floor(Math.max(w,h)/300));for(let x=0;x<w;x+=step){add(x,0);add(x,h-1)}for(let y=0;y<h;y+=step){add(0,y);add(w-1,y)}
+  const refs=[...bk.values()].sort((a,b)=>b.n-a.n).slice(0,4).map(b=>[b.r/b.n,b.g/b.n,b.b/b.n]);
+  const T=(st.tol*1.6)**2,isBg=i=>{for(const r of refs){const a=d[i]-r[0],b=d[i+1]-r[1],c=d[i+2]-r[2];if(a*a+b*b+c*c<T)return true}return false};
+  const m=new Uint8Array(w*h),stack=new Int32Array(w*h);let sp=0;
+  const seed=(x,y)=>{const p=y*w+x;if(!m[p]&&isBg(p*4)){m[p]=1;stack[sp++]=p}};
+  for(let x=0;x<w;x++){seed(x,0);seed(x,h-1)}for(let y=0;y<h;y++){seed(0,y);seed(w-1,y)}
+  while(sp){const p=stack[--sp],x=p%w,y=(p/w)|0;
+    if(x>0){const q=p-1;if(!m[q]&&isBg(q*4)){m[q]=1;stack[sp++]=q}}
+    if(x<w-1){const q=p+1;if(!m[q]&&isBg(q*4)){m[q]=1;stack[sp++]=q}}
+    if(y>0){const q=p-w;if(!m[q]&&isBg(q*4)){m[q]=1;stack[sp++]=q}}
+    if(y<h-1){const q=p+w;if(!m[q]&&isBg(q*4)){m[q]=1;stack[sp++]=q}}}
+  let cnt=0;for(let i=0;i<m.length;i++)cnt+=m[i];const frac=cnt/m.length;
+  if(frac>.97){toast("Le sujet est trop proche du fond : réduisez la tolérance");return}
+  if(frac<.01){toast("Fond uniforme non détecté : augmentez la tolérance");return}
+  let a=new Float32Array(w*h);for(let i=0;i<a.length;i++)a[i]=m[i]?0:1;
+  const R=st.soft;if(R>0){const bx=(arr,rad)=>{const o=new Float32Array(arr.length),n=rad*2+1;
+      for(let y=0;y<h;y++){let s=0;for(let x=-rad;x<=rad;x++)s+=arr[y*w+Math.min(w-1,Math.max(0,x))];for(let x=0;x<w;x++){o[y*w+x]=s/n;s+=arr[y*w+Math.min(w-1,x+rad+1)]-arr[y*w+Math.max(0,x-rad)]}}
+      const o2=new Float32Array(arr.length);for(let x=0;x<w;x++){let s=0;for(let y=-rad;y<=rad;y++)s+=o[Math.min(h-1,Math.max(0,y))*w+x];for(let y=0;y<h;y++){o2[y*w+x]=s/n;s+=o[Math.min(h-1,y+rad+1)*w+x]-o[Math.max(0,y-rad)*w+x]}}return o2};a=bx(a,R)}
+  for(let i=0;i<a.length;i++){d[i*4+3]=Math.round(255*Math.min(1,Math.max(0,a[i]))*(d[i*4+3]/255))}
+  snapM();const sc=st.S.getContext("2d");sc.clearRect(0,0,w,h);sc.putImageData(src,0,0);
+  const pc=st.Pv.getContext("2d");pc.clearRect(0,0,st.Pv.width,st.Pv.height);pc.drawImage(st.S,0,0,st.Pv.width,st.Pv.height);
+  st.bgDone=true;st.bgv=st.bgv==="checker"?"checker":st.bgv;toast("Arrière-plan supprimé · exportez en PNG transparent");scheduleRender()}
+function exportImg(){
+  if(!st.S){toast("Ouvrez d’abord une photo");return}
+  if(!useTrial())return;
+  const out=document.createElement("canvas");renderTo(out,st.S,st.P);
+  const wm=!(isAdmin||planActive(cur()));
+  if(wm){const x=out.getContext("2d");x.save();x.fillStyle="rgba(255,255,255,.6)";x.shadowColor="rgba(0,0,0,.5)";x.shadowBlur=4;x.font=`700 ${Math.round(out.width/22)}px sans-serif`;x.textAlign="right";x.fillText("VISOL",out.width-out.width/40,out.height-out.height/40);x.restore()}
+  const png=st.bgDone;
+  out.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="visol_"+st.name.replace(/\.[^.]+$/,"")+(png?".png":".jpg");document.body.appendChild(a);a.click();a.remove();
+    toast(png?"PNG transparent exporté":wm?"Exporté avec le filigrane VISOL":"Photo exportée en haute résolution")},png?"image/png":"image/jpeg",.95)}
+$("#bExport").onclick=exportImg;
+
+/* ================= Actions globales ================= */
+function act(a,d){
+  switch(a){
+    case"goAuth":authMode=d.m;go("connexion");break;
+    case"closeAuth":closeSheet();authMode=d.m;go("connexion");break;
+    case"preset":st.preset=d.p;renderPanel();break;
+    case"auto":if(!st.Pv)setSource(makeDemo(),"démo.jpg");if(!useTrial())return;applyLook(PRESETS[st.preset||"auto"]);toast("Retouche appliquée");break;
+    case"magic":magic();break;
+    case"tog":snapP();st.P[d.k]=st.P[d.k]?0:1;renderPanel();scheduleRender();break;
+    case"rot":snapP();st.P.rot=(st.P.rot+(+d.d)+4)%4;scheduleRender();break;
+    case"asp":snapP();st.P.aspect=d.a;renderPanel();scheduleRender();break;
+    case"addtext":{const v=$("#txIn").value.trim();if(!v){toast("Saisissez un texte");return}snapP();st.P.texts.push({t:v,x:50,y:50,size:8,color:"#ffffff"});renderPanel();scheduleRender();break}
+    case"deltext":snapP();st.P.texts.pop();renderPanel();scheduleRender();break;
+    case"bgremove":if(!st.Pv)setSource(makeDemo(),"démo.jpg");if(!needPro("Le détourage d’arrière-plan"))return;bgRemove();break;
+    case"tool":setTool(d.t);renderPanel();break;
+    case"bgv":st.bgv=d.v;renderPanel();scheduleRender();break;
+    case"logout":SESSION=null;LS.set("visol.session",null);try{sessionStorage.removeItem("visol.adm")}catch(e){}isAdmin=false;refreshTrial();toast("Déconnecté");go("accueil");break;
+    case"share":shareApp();break;
+    case"admin:tab":adminTab=d.t;renderAdmin();break;
+    default:if(a.startsWith("a:"))adminAct(a.slice(2),d)}
+}
+function shareApp(){const url=baseUrl(),txt="Découvrez VISOL : retouche photo assistée par IA. 3 essais gratuits par jour !";
+  if(navigator.share){navigator.share({title:"VISOL",text:txt,url}).catch(()=>{})}
+  else sheet(`<h3>Partager VISOL</h3><div class="copyrow"><input readonly value="${esc(url)}" id="shUrl"><button class="btn sm" onclick="copyTxt('${esc(url)}')">Copier</button></div><a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt+" "+url)}">WhatsApp</a><a class="btn ghost" style="margin-top:8px" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}">Facebook</a><a class="btn ghost" style="margin-top:8px" target="_blank" rel="noopener" href="https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(txt)}">Telegram</a><button class="btn" onclick="closeSheet()">Fermer</button>`)}
+function copyTxt(t){if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>toast("Copié"),()=>toast(t));else toast(t)}
+
+/* ================= Abonnement (M-Pesa manuel) ================= */
+function choosePlan(name){
+  const price=(name==="Gold"?CFG.goldPrice:CFG.proPrice)+" "+CFG.currency;
+  if(!cur()){needLogin();return}
+  sheet(`<h3>VISOL ${name} · ${esc(price)}/mois</h3>
+  <p>1. Payez ${esc(price)} par M-Pesa ${CFG.mpesa?`au <b>${esc(CFG.mpesa)}</b>`:"au numéro communiqué par l’équipe VISOL"}.</p>
+  <p>2. Saisissez la référence de la transaction ci-dessous.</p>
+  <input class="field" id="payRef" placeholder="Référence M-Pesa">
+  <p>3. Votre compte est activé après vérification par l’administrateur.</p>
+  <button class="btn" data-act="a:sendpay" data-plan="${name}">J’ai payé · envoyer ma demande</button><button class="btn ghost" onclick="closeSheet()">Fermer</button>`)}
+
+/* ================= Connexion ================= */
+let authMode="login";
+function renderAuth(){
+  const el=$("#p-connexion");
+  el.innerHTML=`<div class="auth"><div class="eyebrow">Compte VISOL</div><h1>${authMode==="signup"?"Créer mon compte":"Connexion"}</h1>
+  <p class="muted" style="font-size:12px">${authMode==="signup"?"3 essais gratuits par jour pendant 7 jours. Vos photos restent privées.":"Vos photos sont privées : vous seul pouvez les voir."}</p>
+  <div class="seg"><button class="${authMode==="login"?"on":""}" id="mLogin">Connexion</button><button class="${authMode==="signup"?"on":""}" id="mSignup">Créer un compte</button></div>
+  <button class="btn ghost" id="gBtn" style="margin-bottom:10px">Continuer avec Google (bientôt)</button>
+  ${authMode==="signup"?'<input class="field" id="aName" placeholder="Votre prénom" autocomplete="given-name">':""}
+  <input class="field" type="email" id="aEmail" placeholder="Adresse e-mail" autocomplete="email">
+  <input class="field" type="password" id="aPwd" placeholder="Mot de passe (6 caractères minimum)" autocomplete="${authMode==="signup"?"new-password":"current-password"}">
+  <button class="btn" id="aGo">${authMode==="signup"?"Créer mon compte gratuit":"Se connecter"}</button>
+  <a class="lnk" href="#" id="aForgot">Mot de passe oublié ?</a>
+  <a class="lnk" href="#" id="aAdm" style="color:var(--muted)">Espace administrateur</a></div>`;
+  $("#mLogin").onclick=()=>{authMode="login";renderAuth()};$("#mSignup").onclick=()=>{authMode="signup";renderAuth()};
+  $("#gBtn").onclick=()=>toast("Connexion Google : bientôt disponible");
+  $("#aForgot").onclick=e=>{e.preventDefault();toast("Contactez l’administrateur : "+CFG.email)};
+  $("#aAdm").onclick=e=>{e.preventDefault();location.hash="admin";go("admin")};
+  $("#aGo").onclick=async()=>{
+    const em=$("#aEmail").value.trim().toLowerCase(),pw=$("#aPwd").value;
+    if(!/^\S+@\S+\.\S+$/.test(em)){toast("Adresse e-mail invalide");return}
+    if(pw.length<6){toast("Mot de passe : 6 caractères minimum");return}
+    const hh=await H(em+"|"+pw);
+    if(authMode==="signup"){
+      if(USERS[em]){toast("Ce compte existe déjà : connectez-vous");return}
+      USERS[em]={email:em,name:($("#aName").value||"").trim(),hash:hh,created:Date.now(),plan:null,planUntil:0,usage:{},total:0,blocked:false};
+      saveAll();toast("Bienvenue ! 3 essais gratuits par jour pendant 7 jours")}
+    else{const u=USERS[em];if(!u||u.hash!==hh){toast("E-mail ou mot de passe incorrect");return}}
+    SESSION=em;LS.set("visol.session",em);buildMenu();refreshTrial();const nx=pending;pending=null;go(nx&&nx!=="connexion"?nx:"accueil")};
+}
+
+/* ================= Profil & P’smylie ================= */
+function renderProfile(){
+  const u=cur(),el=$("#p-profil");if(!u&&!isAdmin){go("connexion");return}
+  let rows;
+  if(isAdmin&&!u)rows=`<div class="row"><span>Rôle</span><span>Administrateur</span></div>`;
+  else{const t=trial(u);rows=`<div class="row"><span>E-mail</span><span>${esc(u.email)}</span></div><div class="row"><span>Nom</span><span>${esc(u.name||"—")}</span></div><div class="row"><span>Formule</span><span>${planActive(u)?esc(u.plan)+" · jusqu’au "+fdate(u.planUntil):"Essai gratuit"}</span></div>${planActive(u)?"":`<div class="row"><span>Essais</span><span>${t.expired?"Terminés":"Jour "+t.dayN+"/7 · "+t.left+" restant(s) aujourd’hui"}</span></div>`}<div class="row"><span>Retouches réalisées</span><span>${u.total||0}</span></div>`}
+  el.innerHTML=`<div class="eyebrow">Mon compte</div><h1>Profil</h1><div class="list" style="margin-bottom:14px">${rows}</div>
+   <button class="btn" data-go="abonnements" style="margin-bottom:8px">Voir les abonnements</button>
+   <button class="btn ghost" data-act="share" style="margin-bottom:8px">Partager VISOL</button>
+   ${isAdmin?'<button class="btn gold" data-go="admin" style="margin-bottom:8px">Espace administrateur</button>':""}
+   <button class="btn ghost" data-act="logout">Se déconnecter</button>
+   <div class="sec-head"><h2>Suivez-nous</h2></div>${socialsHTML()||'<p class="muted" style="font-size:12px">Les liens apparaîtront ici.</p>'}`}
+function renderPsmylie(){
+  $("#p-psmylie").innerHTML=`<div class="card profile"><div class="avatar">${esc((CFG.name||"P")[0])}</div><h1>${esc(CFG.name)}</h1><div class="handle">${esc(CFG.handle)} · Créateur de VISOL</div><div class="badge">MEMBRE GOLD</div>
+  <p class="bio">${esc(CFG.bio)}</p>${socialsHTML()}<div class="socials"><a href="tel:${esc(CFG.phone.replace(/\s/g,""))}">${esc(CFG.phone)}</a><a href="mailto:${esc(CFG.email)}">${esc(CFG.email)}</a></div>
+  <div class="pstats"><div><b>248</b><small>Photos</small></div><div><b>3,4k</b><small>Abonnés</small></div><div><b>14</b><small>Leçons</small></div></div>
+  <button class="btn" data-go="portfolio">Voir le portfolio</button><button class="btn ghost" style="margin-top:8px" data-act="share">Partager VISOL</button></div>`}
+
+/* ================= Community ================= */
+function renderPosts(){$("#posts").innerHTML=POSTS.map((p,i)=>quoteHTML(p).replace("</div>",isAdmin?`<button class="btn red sm" style="margin-top:8px" data-act="a:delpost" data-i="${i}">Supprimer</button></div>`:"</div>")).join("")}
+$("#postBtn").onclick=()=>{const t=$("#postText").value.trim();if(!t){toast("Écrivez un message avant de publier");return}const u=cur();POSTS.unshift([t,(isAdmin?ADMIN_NAME:(u&&(u.name||u.email.split("@")[0])))+" · à l’instant"]);saveAll();$("#postText").value="";renderPosts();toast("Publié")};
+
+/* ================= Assistant IA (abonnés) ================= */
+const KB=[[/expos|trop (sombre|clair)|lumi[eè]re|bright/i,"Exposition : corrigez d’abord l’exposition globale, puis récupérez les détails avec Ombres (+) et Hautes lumières (−). Évitez de pousser l’exposition au-delà de 120 sur une photo déjà claire."],
+[/contrast/i,"Contraste : un contraste entre 105 et 125 donne de la profondeur sans écraser les noirs. Ajoutez un léger vignettage (20–35) pour guider l’œil vers le sujet."],
+[/satur|couleur|terne|fade/i,"Couleurs : montez la saturation entre 110 et 130, pas plus. Si la peau devient orange, baissez la saturation et corrigez la température vers le froid (−5 à −10)."],
+[/peau|portrait|visage/i,"Portrait : utilisez le préréglage « Portrait naturel », gardez la netteté sous 30 sur le visage, remontez légèrement les Ombres (+10 à +20) pour adoucir les cernes."],
+[/noir|blanc|n&b|monochrome/i,"Noir et blanc : activez N&B dans Couleur, puis augmentez le contraste (120–135) et ajoutez un peu de grain (10–20) pour un rendu argentique."],
+[/arri[eè]re|fond|d[ée]tour|transparent|png/i,"Détourage : onglet Arrière-plan → ajustez la Tolérance (30 pour un fond uni, 50+ pour un fond dégradé), puis affinez avec Gomme et Restaurer. Exportez en PNG pour garder la transparence."],
+[/recadr|format|instagram|story|tiktok|ratio/i,"Formats : 1:1 ou 4:5 pour les publications Instagram/Facebook, 9:16 pour stories et TikTok, 16:9 pour YouTube. Onglet Géométrie → Recadrage."],
+[/net|flou|sharp|d[ée]tail/i,"Netteté : entre 30 et 50 suffit. Trop de netteté fait ressortir le bruit. Vérifiez à 100 % de zoom avant d’exporter."],
+[/cin[eé]ma|film|look|style/i,"Look cinéma : contraste 125, saturation 88, température −12, vignettage 35 et un peu de grain. Essayez aussi le bouton « Surprise » pour 6 looks en un tap."],
+[/export|qualit[eé]|filigrane|r[ée]solution/i,"Export : la photo sort en haute résolution (jusqu’à 2000 px). Le filigrane VISOL n’apparaît qu’en essai gratuit ; il disparaît avec Pro ou Gold."],
+[/texte|logo|titre/i,"Texte : onglet Texte → saisissez votre message, ajoutez-le puis réglez taille, position et couleur."],
+[/bonjour|salut|hello|coucou/i,"Bonjour ! Posez-moi une question sur la lumière, les couleurs, le portrait, le détourage ou les formats."]];
+let chatLog=[];
+function renderAI(){
+  const el=$("#aiBody");
+  if(!hasPro()){el.innerHTML=`<div class="lock">🔒 L’assistant IA est réservé aux abonnés <b>Pro</b> et <b>Gold</b>.</div><p class="muted" style="margin-bottom:12px">Posez vos questions de retouche et recevez des conseils précis sur vos réglages.</p><button class="btn gold" data-go="abonnements">Voir les abonnements</button>`;return}
+  el.innerHTML=`<div class="sugg">${["Mon portrait est trop sombre","Comment supprimer l’arrière-plan ?","Quel format pour Instagram ?","Un look cinéma"].map(s=>`<button data-q="${esc(s)}">${esc(s)}</button>`).join("")}</div>
+  <div class="chat" id="chat">${chatLog.length?chatLog.map(m=>`<div class="msg ${m.r}">${esc(m.t)}</div>`).join(""):'<div class="msg ai">Bonjour ! Je suis l’assistant VISOL. Posez-moi vos questions de retouche.</div>'}</div>
+  <textarea class="field" id="aiIn" placeholder="Votre question…" style="min-height:56px"></textarea><button class="btn" id="aiSend">Envoyer</button>`;
+  const send=async q=>{q=q.trim();if(!q)return;chatLog.push({r:"me",t:q});$("#aiIn").value="";renderChat();const a=await aiReply(q);chatLog.push({r:"ai",t:a});renderChat()};
+  $("#aiSend").onclick=()=>send($("#aiIn").value);
+  $$(".sugg button").forEach(b=>b.onclick=()=>send(b.dataset.q));
+}
+function renderChat(){const c=$("#chat");if(!c)return;c.innerHTML=chatLog.map(m=>`<div class="msg ${m.r}">${esc(m.t)}</div>`).join("");window.scrollTo(0,document.body.scrollHeight)}
+async function aiReply(q){
+  if(CFG.aiEndpoint){try{const r=await fetch(CFG.aiEndpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:q,history:chatLog.slice(-8)})});const j=await r.json();if(j&&j.reply)return String(j.reply)}catch(e){}}
+  const hit=KB.find(k=>k[0].test(q));
+  return hit?hit[1]:"Je n’ai pas de conseil précis sur ce point. Essayez de me poser une question sur : exposition, contraste, couleurs, portrait, noir et blanc, détourage, formats ou export."}
+
+/* ================= Administration ================= */
+let adminTab="Aperçu";
+function renderAdmin(){
+  const el=$("#p-admin");
+  if(!isAdmin){
+    el.innerHTML=`<div class="auth"><div class="eyebrow">Accès réservé</div><h1>Espace administrateur</h1>
+    <p class="muted" style="font-size:12px;margin-bottom:12px">Saisissez votre nom d’administrateur et votre mot de passe.</p>
+    <input class="field" id="adName" placeholder="Nom d’administrateur" autocomplete="username">
+    <input class="field" type="password" id="adPw" placeholder="Mot de passe" autocomplete="current-password">
+    <button class="btn gold" id="adGo">Entrer</button><a class="lnk" href="#" id="adBack">Retour</a></div>`;
+    $("#adBack").onclick=e=>{e.preventDefault();location.hash="";go("accueil")};
+    $("#adGo").onclick=async()=>{
+      if(!(await adminOk($("#adName").value,$("#adPw").value))){toast("Nom ou mot de passe incorrect");return}
+      isAdmin=true;try{sessionStorage.setItem("visol.adm","1")}catch(e){}refreshTrial();buildMenu();renderAdmin();toast("Bienvenue, "+ADMIN_NAME)};
+    return}
+  const TABSA=["Aperçu","Utilisateurs","Paiements","Mes infos","Réseaux","Données"];
+  let body="";
+  if(adminTab==="Aperçu"){
+    const us=Object.values(USERS),pro=us.filter(u=>planActive(u)&&u.plan==="Pro").length,gold=us.filter(u=>planActive(u)&&u.plan==="Gold").length,pend=REQS.filter(r=>r.status==="en attente").length,today=us.filter(u=>dk(new Date(u.created))===dk()).length;
+    const rev=pro*(+CFG.proPrice||0)+gold*(+CFG.goldPrice||0);
+    body=`<div class="stats"><div class="card"><small>Utilisateurs (cet appareil)</small><b>${us.length}</b></div><div class="card"><small>Nouveaux aujourd’hui</small><b>${today}</b></div><div class="card"><small>Abonnés Pro / Gold</small><b>${pro} / ${gold}</b></div><div class="card"><small>Revenu mensuel estimé</small><b>${rev} ${esc(CFG.currency)}</b></div></div>
+    <div class="sec-head"><h2>Vos deux liens</h2></div>
+    <label class="fl">Lien invités (à partager)</label><div class="copyrow"><input readonly value="${esc(baseUrl())}"><button class="btn sm" data-act="a:copy" data-t="${esc(baseUrl())}">Copier</button></div>
+    <label class="fl">Lien administrateur (privé)</label><div class="copyrow"><input readonly value="${esc(baseUrl()+"#admin")}"><button class="btn sm" data-act="a:copy" data-t="${esc(baseUrl()+"#admin")}">Copier</button></div>
+    <button class="btn ghost" data-act="share" style="margin-top:6px">Partager le lien invités</button>
+    ${pend?`<div class="banner" style="margin-top:14px">⏳ ${pend} demande(s) de paiement en attente</div>`:""}
+    <div class="sec-head"><h2>Annonce affichée à tous</h2></div><textarea class="field" id="cfgAnn" placeholder="Ex. : -20 % sur Gold cette semaine">${esc(CFG.announcement)}</textarea><button class="btn" data-act="a:saveann">Publier l’annonce</button>`}
+  else if(adminTab==="Utilisateurs"){
+    const us=Object.values(USERS).sort((a,b)=>b.created-a.created);
+    body=us.length?us.map(u=>{const t=trial(u);return `<div class="urow"><div class="top"><b>${esc(u.email)}</b><span class="chip ${planActive(u)?"gold":""}">${planActive(u)?esc(u.plan):t.expired?"Essai fini":"Essai J"+t.dayN}</span></div>
+      <div class="muted">${esc(u.name||"—")} · inscrit le ${fdate(u.created)} · ${u.total||0} retouche(s)${planActive(u)?" · jusqu’au "+fdate(u.planUntil):""}${u.blocked?" · <b style='color:var(--red)'>bloqué</b>":""}</div>
+      <div class="acts" style="margin-top:8px"><button data-act="a:plan" data-e="${esc(u.email)}" data-p="Pro">Pro +30 j</button><button data-act="a:plan" data-e="${esc(u.email)}" data-p="Gold">Gold +30 j</button><button data-act="a:plan" data-e="${esc(u.email)}" data-p="">Retirer l’abonnement</button><button data-act="a:resetuse" data-e="${esc(u.email)}">Rendre les essais</button><button data-act="a:resetpw" data-e="${esc(u.email)}">Mot de passe → visol123</button><button data-act="a:block" data-e="${esc(u.email)}">${u.blocked?"Débloquer":"Bloquer"}</button><button data-act="a:deluser" data-e="${esc(u.email)}" style="color:var(--red)">Supprimer</button></div></div>`}).join(""):`<p class="muted">Aucun utilisateur sur cet appareil pour le moment.</p>`}
+  else if(adminTab==="Paiements"){
+    body=REQS.length?REQS.slice().reverse().map(r=>`<div class="urow"><div class="top"><b>${esc(r.email)}</b><span class="chip ${r.status==="validé"?"green":r.status==="refusé"?"":"gold"}">${esc(r.status)}</span></div><div class="muted">${esc(r.plan)} · réf. ${esc(r.ref||"—")} · ${fdate(r.date)}</div>${r.status==="en attente"?`<div class="acts" style="margin-top:8px"><button data-act="a:okpay" data-id="${r.id}">Valider (+30 j)</button><button data-act="a:nopay" data-id="${r.id}" style="color:var(--red)">Refuser</button></div>`:""}</div>`).join(""):`<p class="muted">Aucune demande de paiement.</p>`}
+  else if(adminTab==="Mes infos"){
+    const f=(k,l,t="text")=>`<label class="fl">${l}</label><input class="field" data-cfg="${k}" type="${t}" value="${esc(CFG[k])}">`;
+    body=`${f("name","Nom affiché")}${f("handle","Pseudo")}<label class="fl">Présentation</label><textarea class="field" data-cfg="bio">${esc(CFG.bio)}</textarea>${f("phone","Téléphone")}${f("email","E-mail de contact")}${f("mpesa","Numéro M-Pesa pour recevoir les paiements")}${f("proPrice","Prix Pro (par mois)","number")}${f("goldPrice","Prix Gold (par mois)","number")}${f("currency","Devise")}${f("aiEndpoint","Adresse de l’assistant IA (optionnel)")}<button class="btn" data-act="a:savecfg">Enregistrer mes informations</button>`}
+  else if(adminTab==="Réseaux"){
+    body=Object.keys(SOCNAMES).map(k=>`<label class="fl">${SOCNAMES[k]} (pseudo ou lien)</label><input class="field" data-soc="${k}" value="${esc(CFG.socials[k])}">`).join("")+`<button class="btn" data-act="a:savesoc">Enregistrer les réseaux</button>`}
+  else{
+    body=`<p class="muted" style="margin-bottom:10px;font-size:12px">Les comptes et réglages sont stockés dans ce navigateur. Exportez régulièrement une sauvegarde.</p>
+    <button class="btn" data-act="a:export">Exporter une sauvegarde</button><button class="btn ghost" style="margin-top:8px" data-act="a:import">Importer une sauvegarde</button><input type="file" id="impFile" accept="application/json" hidden>
+    <div class="sec-head"><h2>Mot de passe administrateur</h2></div><input class="field" type="password" id="newAdPw" placeholder="Nouveau mot de passe"><button class="btn ghost" data-act="a:chpw">Changer le mot de passe</button>
+    <button class="btn red" style="margin-top:18px" data-act="logout">Quitter l’espace administrateur</button>`}
+  el.innerHTML=`<div class="eyebrow">Administration</div><h1>Espace administrateur</h1><div class="atabs">${TABSA.map(t=>`<button class="${adminTab===t?"on":""}" data-act="admin:tab" data-t="${t}">${t}</button>`).join("")}</div>${body}`;
+  const imp=$("#impFile");if(imp)imp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.users)USERS=j.users;if(j.cfg)CFG=Object.assign({},DEFCFG,j.cfg,{socials:Object.assign({},DEFCFG.socials,j.cfg.socials||{})});if(j.reqs)REQS=j.reqs;if(j.posts)POSTS=j.posts;saveAll();toast("Sauvegarde importée");renderAdmin()}catch(x){toast("Fichier invalide")}};r.readAsText(f)};
+}
+async function adminAct(a,d){
+  if(a==="sendpay"){const u=cur();if(!u)return;const ref=($("#payRef")||{}).value||"";if(!ref.trim()){toast("Saisissez la référence M-Pesa");return}
+    REQS.push({id:Date.now(),email:u.email,plan:d.plan,ref:ref.trim(),date:Date.now(),status:"en attente"});saveAll();closeSheet();
+    toast("Demande envoyée. L’administrateur va l’activer.");
+    const body=encodeURIComponent(`Bonjour,\nJe viens de payer la formule ${d.plan} par M-Pesa.\nCompte : ${u.email}\nRéférence : ${ref.trim()}`);location.href=`mailto:${CFG.email}?subject=${encodeURIComponent("Paiement VISOL "+d.plan)}&body=${body}`;return}
+  if(!isAdmin)return;
+  const U=USERS[d.e];
+  switch(a){
+    case"copy":copyTxt(d.t);break;
+    case"saveann":CFG.announcement=$("#cfgAnn").value.trim();saveAll();toast("Annonce enregistrée");break;
+    case"savecfg":$$("[data-cfg]").forEach(i=>{CFG[i.dataset.cfg]=i.type==="number"?(+i.value||0):i.value.trim()});saveAll();toast("Informations enregistrées");break;
+    case"savesoc":$$("[data-soc]").forEach(i=>{CFG.socials[i.dataset.soc]=i.value.trim()});saveAll();toast("Réseaux enregistrés");break;
+    case"plan":if(U){if(d.p){U.plan=d.p;U.planUntil=Math.max(Date.now(),U.planUntil||0)+30*DAY}else{U.plan=null;U.planUntil=0}saveAll();renderAdmin();toast("Mis à jour")}break;
+    case"resetuse":if(U){U.usage={};saveAll();renderAdmin();toast("Essais du jour rendus")}break;
+    case"resetpw":if(U){U.hash=await H(U.email+"|visol123");saveAll();toast("Mot de passe temporaire : visol123")}break;
+    case"block":if(U){U.blocked=!U.blocked;saveAll();renderAdmin()}break;
+    case"deluser":if(U&&confirm("Supprimer ce compte ?")){delete USERS[d.e];saveAll();renderAdmin()}break;
+    case"okpay":{const r=REQS.find(x=>x.id==d.id),u=r&&USERS[r.email];if(r){r.status="validé";if(u){u.plan=r.plan;u.planUntil=Math.max(Date.now(),u.planUntil||0)+30*DAY}saveAll();renderAdmin();toast("Abonnement activé")}break}
+    case"nopay":{const r=REQS.find(x=>x.id==d.id);if(r){r.status="refusé";saveAll();renderAdmin()}break}
+    case"delpost":POSTS.splice(+d.i,1);saveAll();renderPosts();break;
+    case"export":{const b=new Blob([JSON.stringify({users:USERS,cfg:CFG,reqs:REQS,posts:POSTS},null,1)],{type:"application/json"}),a2=document.createElement("a");a2.href=URL.createObjectURL(b);a2.download="visol-sauvegarde-"+dk()+".json";a2.click();break}
+    case"import":$("#impFile").click();break;
+    case"chpw":{const p=$("#newAdPw").value;if(p.length<6){toast("6 caractères minimum");return}ADMIN_OVR=await H("admin|"+normN(ADMIN_NAME)+"|"+p);LS.set("visol.adminhash",ADMIN_OVR);$("#newAdPw").value="";toast("Mot de passe changé");break}
+  }
+}
+
+/* ================= Divers & démarrage ================= */
+const LESSONS=["Les bases de l’exposition","Comprendre le contraste","Saturation sans excès","Température et ambiance","Redresser et recadrer","Portrait naturel","Lumière studio","Netteté et détails","Noir et blanc","Gestion des couleurs","Retouche de peau","Ambiance cinéma","Préparer un export client","Lumière rasante : les principes"];
+$("#lessons").innerHTML=LESSONS.map((l,i)=>`<div class="row"><span>Leçon ${i+1} · ${l}</span><span>${i<13?"✓":"en cours"}</span></div>`).join("");
+$("#folio").innerHTML=Array.from({length:8},(_,i)=>`<div class="thumb">Photo ${i+1}</div>`).join("");
+$("#cloud").innerHTML=[["Mariage_Lyon_2026","8,2 Go"],["Portraits_Studio","2,1 Go"],["Exports_Clients","640 Mo"]].map(c=>`<div class="row"><span>${c[0]}</span><span>${c[1]}</span></div>`).join("");
+$("#market").innerHTML=[["Preset argentique","Gratuit"],["Pack Cinéma 12 looks","6 €"],["Preset portrait doux","4 €"],["Pack noir et blanc","5 €"]].map(m=>`<div class="card item"><div>${m[0]}</div><div class="p">${m[1]}</div><button class="btn ghost sm" onclick="toast('Bientôt disponible')">Obtenir</button></div>`).join("");
+$("#news").innerHTML=[["Détourage d’arrière-plan","Fond transparent en PNG pour les abonnés Pro et Gold."],["Assistant IA","Des conseils de retouche pour les abonnés."],["3 essais gratuits par jour","Pendant 7 jours après votre inscription."]].map(n=>`<div class="quote"><p><b>${n[0]}</b></p><small>${n[1]}</small></div>`).join("");
+$("#hUser").onclick=()=>go(cur()||isAdmin?"profil":"connexion");
+$("#hUser").removeAttribute("data-go");
+setSource(makeDemo(),"démo.jpg");
+renderTabs();renderPanel();refreshTrial();buildMenu();
+if("serviceWorker" in navigator&&/^https?:/.test(location.protocol)){navigator.serviceWorker.register("sw.js").catch(function(){})}
+go(location.hash==="#admin"?"admin":"accueil");
+</script>
+</body>
+</html>
